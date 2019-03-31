@@ -12,7 +12,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # hole we don't know about).
 SECRET_KEY = os.urandom(30)
 
-if 'Development' in os.environ.get('SERVER_SOFTWARE', ''):
+if os.environ.get('GAE_ENV', '') == 'localdev':
     DEBUG = True
     # If DEBUG is True and ALLOWED_HOSTS is empty, Django permits localhost.
     ALLOWED_HOSTS = []

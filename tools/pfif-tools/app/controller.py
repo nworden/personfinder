@@ -15,7 +15,7 @@
 
 """Provides a web interface for pfif_tools."""
 
-from StringIO import StringIO
+from io import StringIO
 
 from django.shortcuts import render
 from django.views import View
@@ -41,7 +41,8 @@ class PfifController(View):
     if self.request.POST.get(paste_name):
       desired_file = StringIO(self.request.POST[paste_name])
     elif upload_name in self.request.FILES:
-      desired_file = StringIO(self.request.FILES[upload_name].read())
+      f = self.request.FILES[upload_name]
+      desired_file = StringIO(f.read().decode(f.charset or 'utf-8'))
       filename = self.request.FILES[upload_name].name
     elif self.request.POST.get(url_name):
       url = self.request.POST[url_name]
@@ -118,9 +119,9 @@ class ValidatorController(PfifController):
     print_options = self.request.POST.getlist('print_options')
     show_errors = 'show_errors' in print_options
     show_warnings = 'show_warnings' in print_options
-    page_ctx['msgs'] = list(filter(
-        lambda msg: ((show_errors and msg.is_error) or
-                     (show_warnings and not msg.is_error)), messages))
+    page_ctx['msgs'] = list(
+        [msg for msg in messages if ((show_errors and msg.is_error) or
+                                     (show_warnings and not msg.is_error))])
     page_ctx['show_line_numbers'] = 'show_line_numbers' in print_options
     page_ctx['show_record_ids'] = 'show_record_ids' in print_options
     page_ctx['show_xml_tag'] = 'show_xml_tag' in print_options

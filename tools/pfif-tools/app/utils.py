@@ -15,11 +15,11 @@
 
 """Utilities for the PFIF Validator"""
 
-import re
-from datetime import datetime
-import xml.etree.ElementTree as ET
-import urllib
 import cgi
+from datetime import datetime
+import re
+import urllib.request
+import xml.etree.ElementTree as ET
 
 # XML Parsing Utilities
 
@@ -53,7 +53,7 @@ def open_file(filename, mode='r'):
 # TODO(samking): do incremental URL reading to support massive files
 def open_url(url):
   """Opens the url or returns a debug value if set."""
-  return _file_for_test or urllib.urlopen(url)
+  return _file_for_test or urllib.request.urlopen(url)
 
 def get_utcnow():
   """Return current time in utc, or debug value if set."""
@@ -94,7 +94,7 @@ class PfifXmlTree():
     the XML library will raise an exception."""
     file_with_lines = FileWithLines(xml_file)
     tree_parser = iter(ET.iterparse(file_with_lines, events=['start']))
-    event, root = tree_parser.next() # pylint: disable=W0612
+    event, root = next(tree_parser) # pylint: disable=W0612
     self.line_numbers[root] = file_with_lines.line_number
 
     for event, elem in tree_parser:

@@ -18,7 +18,7 @@
 
 import copy
 import os
-from StringIO import StringIO
+from io import StringIO
 import unittest
 import utils
 
@@ -64,14 +64,14 @@ class ControllerTests(unittest.TestCase):
     exception."""
     for path in ['/validate/results', '/diff/results']:
       response = self.make_request({}, path=path)
-      self.assertTrue("html" in response.content)
+      self.assertTrue("html" in response.content.decode('utf-8'))
 
   def test_pasting_xml(self):
     """The page should have the correct number of errors in the header when
     using the pfif_xml_1 POST variable to send PFIF XML."""
     response = self.make_request(
         {'pfif_xml_1' : PfifXml.XML_TWO_DUPLICATE_NO_CHILD})
-    self.assertTrue("3 Messages" in response.content)
+    self.assertTrue("3 Messages" in response.content.decode('utf-8'))
 
   def test_file_upload(self):
     """The page should have the correct number of errors in the header when
@@ -79,14 +79,14 @@ class ControllerTests(unittest.TestCase):
     xml_file = StringIO(PfifXml.XML_TWO_DUPLICATE_NO_CHILD)
     xml_file.name = 'two_duplicate_no_child.xml'
     response = self.make_request({'pfif_xml_file_1': xml_file})
-    self.assertTrue("3 Messages" in response.content)
+    self.assertTrue("3 Messages" in response.content.decode('utf-8'))
 
   def test_url_upload(self):
     """The page should have the correct number of errors in the header when
     using the pfif_xml_url_1 POST variable to send PFIF XML."""
     utils.set_file_for_test(StringIO(PfifXml.XML_TWO_DUPLICATE_NO_CHILD))
     response = self.make_request({'pfif_xml_url_1' : 'dummy_url'})
-    self.assertTrue("3 Messages" in response.content)
+    self.assertTrue("3 Messages" in response.content.decode('utf-8'))
 
   # validator
 
@@ -97,26 +97,26 @@ class ControllerTests(unittest.TestCase):
     xml_file.name = 'xml_expire_99_empty_data.xml'
     post_dict = {'pfif_xml_file_1' : xml_file,
                  'print_options': ['show_errors']}
-    response = self.make_request(post_dict)
-    self.assertTrue('ERROR' in response.content)
-    self.assertTrue('message_type' in response.content)
-    self.assertTrue('message_category' in response.content)
+    response_str = self.make_request(post_dict).content.decode('utf-8')
+    self.assertTrue('ERROR' in response_str)
+    self.assertTrue('message_type' in response_str)
+    self.assertTrue('message_category' in response_str)
 
     post_dict['print_options'].append('show_warnings')
-    response = self.make_request(post_dict)
-    self.assertTrue('WARNING' in response.content)
+    response_str = self.make_request(post_dict).content.decode('utf-8')
+    self.assertTrue('WARNING' in response_str)
 
     post_dict['print_options'].append('show_line_numbers')
-    response = self.make_request(post_dict)
-    self.assertTrue('message_line_number' in response.content)
+    response_str = self.make_request(post_dict).content.decode('utf-8')
+    self.assertTrue('message_line_number' in response_str)
 
     post_dict['print_options'].append('show_record_ids')
-    response = self.make_request(post_dict)
-    self.assertTrue('record_id' in response.content)
+    response_str = self.make_request(post_dict).content.decode('utf-8')
+    self.assertTrue('record_id' in response_str)
 
     post_dict['print_options'].append('show_full_line')
-    response = self.make_request(post_dict)
-    self.assertTrue('message_xml_full_line' in response.content)
+    response_str = self.make_request(post_dict).content.decode('utf-8')
+    self.assertTrue('message_xml_full_line' in response_str)
 
     # EXPIRE_99 doesn't have any errors with xml element text or tag, so we use
     # a different XML file
@@ -124,12 +124,12 @@ class ControllerTests(unittest.TestCase):
     xml_file.name = 'xml_incorrect_format_11.xml'
     post_dict['pfif_xml_file_1'] = xml_file
     post_dict['print_options'].append('show_xml_tag')
-    response = self.make_request(post_dict)
-    self.assertTrue('message_xml_tag' in response.content)
+    response_str = self.make_request(post_dict).content.decode('utf-8')
+    self.assertTrue('message_xml_tag' in response_str)
 
     post_dict['print_options'].append('show_xml_text')
-    response = self.make_request(post_dict)
-    self.assertTrue('message_xml_text' in response.content)
+    response_str = self.make_request(post_dict).content.decode('utf-8')
+    self.assertTrue('message_xml_text' in response_str)
 
   # diff
 
@@ -142,14 +142,14 @@ class ControllerTests(unittest.TestCase):
         'pfif_xml_file_1' : xml_file, 'pfif_xml_url_2' : 'fake_url',
         'options' : ['text_is_case_sensitive']}
     response = self.make_request(post_dict, path='/diff/results')
-    response_str = response.content
+    response_str = response.content.decode('utf-8')
 
     # set the test file again because the first one will be at the end, and the
     # xml parser doesn't have to seek(0) on it.
     utils.set_file_for_test(StringIO(PfifXml.XML_ADDED_DELETED_CHANGED_2))
     post_dict['options'].append('group_messages_by_record')
     grouped_response = self.make_request(post_dict, path='/diff/results')
-    grouped_response_str = grouped_response.content
+    grouped_response_str = grouped_response.content.decode('utf-8')
 
     # The header should have 'Diff' and 'Messages' in it along with the filename
     # or url.
@@ -157,7 +157,7 @@ class ControllerTests(unittest.TestCase):
     for message in ['Diff', 'Messages', 'added_deleted_changed_1.xml',
                     'fake_url', 'extra', 'missing', 'field', 'record', 'Value',
                     'changed', 'A', 'B']:
-      self.assertTrue(message in  response_str and message in
+      self.assertTrue(message in response_str and message in
                       grouped_response_str, 'The diff was missing the '
                       'following message: ' + message + '.  The diff: ' +
                       response_str)
@@ -170,7 +170,7 @@ class ControllerTests(unittest.TestCase):
                'options' : 'text_is_case_sensitive',
                'ignore_fields' : 'foo bar source_date'}
     response = self.make_request(request, path='/diff/results')
-    response_str = response.content
+    response_str = response.content.decode('utf-8')
     for field in ['foo', 'bar', 'source_date']:
       self.assertFalse(field in response_str, field + ' is ignored and should '
                        'not be in the response.')
@@ -182,7 +182,7 @@ class ControllerTests(unittest.TestCase):
         {'pfif_xml_1' : PfifXml.XML_ADDED_DELETED_CHANGED_1,
          'pfif_xml_2' : PfifXml.XML_ADDED_DELETED_CHANGED_2},
         path='/diff/results')
-    response_str = response.content
+    response_str = response.content.decode('utf-8')
     self.assertTrue('pasted in' in response_str)
 
 if __name__ == '__main__':

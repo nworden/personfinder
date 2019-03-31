@@ -17,7 +17,7 @@
 
 import utils
 import unittest
-from StringIO import StringIO
+from io import StringIO
 import tests.pfif_xml as PfifXml
 import pfif_diff
 

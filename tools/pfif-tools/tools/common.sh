@@ -27,18 +27,18 @@ if [ -z "$APPENGINE_DIR" ]; then
     exit 1
 fi
 
-for python in \
-    "$PYTHON" \
-    $(which python) \
-    /usr/local/bin/python \
-    /usr/bin/python; do
-    if [ -x "$python" ]; then
-        export PYTHON="$python"
+for python3 in \
+    "$PYTHON3" \
+    $(which python3) \
+    /usr/local/bin/python3 \
+    /usr/bin/python3; do
+    if [ -x "$python3" ]; then
+        export PYTHON3="$python3"
         break
     fi
 done
 
-if [ -z "$PYTHON" ]; then
+if [ -z "$PYTHON3" ]; then
     echo "Could not find python executable.  Please set PYTHON."
     exit 1
 fi
@@ -47,7 +47,4 @@ export PYTHONPATH=\
 "$APP_DIR":\
 "$TESTS_DIR":\
 "$TOOLS_DIR":\
-"$APPENGINE_DIR":\
-"$APPENGINE_DIR/lib/fancy_urllib":\
-"$APPENGINE_DIR/lib/webob":\
-"$APPENGINE_DIR/lib/yaml/lib"
+"$APPENGINE_DIR"

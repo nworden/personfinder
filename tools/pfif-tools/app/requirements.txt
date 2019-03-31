@@ -1,0 +1,2 @@
+django==1.11.20
+gunicorn==19.9.0

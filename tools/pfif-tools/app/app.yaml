@@ -1,6 +1,6 @@
 application: pfif-tools
 version: 2
-runtime: python27
+runtime: python37
 api_version: 1
 threadsafe: false
 
@@ -19,8 +19,6 @@ handlers:
 - url: /.*
   script: wsgi.application
 
-libraries:
-- name: django
-  version: "1.11"
-- name: ssl
-  version: "2.7.11"
+# App Engine uses gunicorn by default, but it looks for an entrypoint at
+# main.app. We specify entrypoint to direct it to wsgi.application.
+entrypoint: gunicorn -b :$PORT wsgi:application

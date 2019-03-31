@@ -14,14 +14,13 @@
 # limitations under the License.
 
 """Validates that text follows the PFIF XML Specification at zesty.ca/pfif"""
-from __future__ import print_function
 
-import re
-import utils
-from urlparse import urlparse
 import datetime
 import inspect
+import re
 import sys
+from urllib.parse import urlparse
+import utils
 
 class PfifValidator:
   """A validator that can run tests on a PFIF XML file."""
@@ -801,7 +800,7 @@ class PfifValidator:
     messages.extend(self.validate_extraneous_children(
         self.tree.get_all_persons(), person_fields))
 
-    note_fields = PfifValidator.FORMATS[self.version]['note'].keys()
+    note_fields = list(PfifValidator.FORMATS[self.version]['note'].keys())
     messages.extend(self.validate_extraneous_children(
         self.tree.get_all_notes(), note_fields))
 
@@ -817,7 +816,7 @@ class PfifValidator:
       # run all validation methods except for any validation method that takes
       # more than one argument (self), because that will have a wrapper method.
       if (name.find('validate_') != -1 and
-          len(inspect.getargspec(method)[0]) == 1):
+          len(inspect.getfullargspec(method)[0]) == 1):
         messages.extend(method())
     return messages
 

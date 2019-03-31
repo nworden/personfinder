@@ -17,7 +17,7 @@
 """Tests for pfif_validator.py"""
 
 import unittest
-from StringIO import StringIO
+from io import StringIO
 
 import os
 import sys

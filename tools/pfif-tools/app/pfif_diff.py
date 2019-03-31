@@ -30,7 +30,6 @@
   changed.  For each of these, it will display the id of the containing person
   or note, the field name, whether the field was missing, added, or changed, the
   current text (if present), and the expected text (if present)."""
-from __future__ import print_function
 
 __author__ = 'samking@google.com (Sam King)'
 
