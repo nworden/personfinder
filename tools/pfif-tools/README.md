@@ -35,6 +35,6 @@ running this command from the `tools/pfif-tools` directory:
 tools/gae run app
 ```
 
-`dev\_appserver` will set up a virtual environment and install dependencies in
-it on each run, which is inconvenient, so I don't recommend running this way for
+`dev_appserver` will set up a virtual environment and install dependencies in it
+on each run, which is inconvenient, so I don't recommend running this way for
 development if you don't have to.
