@@ -3,7 +3,12 @@ import os
 import sys
 
 if __name__ == '__main__':
+    # Set the GAE_ENV variable the same way dev_appserver does, so that it will
+    # be recognized as a local development server.
+    os.environ.setdefault('GAE_ENV', 'localdev')
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError:
