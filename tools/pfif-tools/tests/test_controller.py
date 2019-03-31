@@ -26,8 +26,9 @@ import django
 from django.test import Client
 from django.test.utils import setup_test_environment, teardown_test_environment
 
-import controller
 import settings
+from views import controller
+
 import tests.pfif_xml as PfifXml
 
 class ControllerTests(unittest.TestCase):
