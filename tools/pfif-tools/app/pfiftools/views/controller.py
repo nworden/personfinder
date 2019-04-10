@@ -20,9 +20,9 @@ from io import StringIO
 from django.shortcuts import render
 from django.views import View
 
-import pfif_validator
-import pfif_diff
-import utils
+import pfiftools.pfif_validator as pfif_validator
+import pfiftools.pfif_diff as pfif_diff
+import pfiftools.utils as utils
 
 class PfifController(View):
   """Provides common functionality to the different PFIF Tools controllers."""

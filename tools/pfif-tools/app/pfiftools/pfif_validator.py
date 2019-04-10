@@ -20,7 +20,8 @@ import inspect
 import re
 import sys
 from urllib.parse import urlparse
-import utils
+
+import pfiftools.utils as utils
 
 class PfifValidator:
   """A validator that can run tests on a PFIF XML file."""

@@ -33,12 +33,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'pfiftools.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['resources'],
+        'DIRS': ['pfiftools/resources'],
         'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
@@ -49,7 +49,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'pfiftools.wsgi.application'
 
 
 # Internationalization

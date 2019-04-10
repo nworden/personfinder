@@ -33,8 +33,9 @@
 
 __author__ = 'samking@google.com (Sam King)'
 
-import utils
 import optparse
+
+import pfiftools.utils as utils
 
 # TODO(samking): Add line numbers and xml lines.
 

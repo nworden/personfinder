@@ -7,7 +7,7 @@ if __name__ == '__main__':
     # be recognized as a local development server.
     os.environ.setdefault('GAE_ENV', 'localdev')
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pfiftools.settings')
 
     try:
         from django.core.management import execute_from_command_line
