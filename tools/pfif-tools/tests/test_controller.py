@@ -20,14 +20,14 @@ import copy
 import os
 from io import StringIO
 import unittest
-import utils
 
 import django
 from django.test import Client
 from django.test.utils import setup_test_environment, teardown_test_environment
 
-import settings
-from views import controller
+import pfiftools.settings
+from pfiftools.views import controller
+from pfiftools import utils
 
 import tests.pfif_xml as PfifXml
 
@@ -43,8 +43,8 @@ class ControllerTests(unittest.TestCase):
     # really nice because it's much faster, but it does seem to mess with the
     # template loader, I guess because it's not running from where it normally
     # would (in the app directory).
-    settings.TEMPLATES[0]['DIRS'] = ['app/resources']
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
+    pfiftools.settings.TEMPLATES[0]['DIRS'] = ['app/pfiftools/resources']
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pfiftools.settings')
     django.setup()
     setup_test_environment()
     self.client = Client()

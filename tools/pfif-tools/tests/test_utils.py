@@ -15,11 +15,11 @@
 
 """Tests for utils.py"""
 
-import utils
+from pfiftools import utils
 import unittest
 from io import StringIO
 import tests.pfif_xml as PfifXml
-import pfif_diff
+from pfiftools import pfif_diff
 
 class UtilTests(unittest.TestCase):
   """Defines tests for utils.py"""

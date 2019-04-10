@@ -18,9 +18,10 @@
 import unittest
 from io import StringIO
 import tests.pfif_xml as PfifXml
-import pfif_diff
 import sys
-import utils
+
+from pfiftools import pfif_diff
+from pfiftools import utils
 
 class DiffTests(unittest.TestCase):
   """Defines tests for pfif_diff.py"""

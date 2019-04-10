@@ -21,11 +21,11 @@ from io import StringIO
 
 import os
 import sys
-from pfif_validator import PfifValidator
-import pfif_validator # to test main
+from pfiftools.pfif_validator import PfifValidator
+from pfiftools import pfif_validator # to test main
 import datetime
-import utils
-from utils import Message
+from pfiftools import utils
+from pfiftools.utils import Message
 import tests.pfif_xml as PfifXml
 
 class ValidatorTests(unittest.TestCase):
