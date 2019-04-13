@@ -18,7 +18,7 @@ if os.environ.get('GAE_ENV', '') == 'localdev':
     ALLOWED_HOSTS = []
 else:
     DEBUG = False
-    ALLOWED_HOSTS = ['pfif-tools.appspot.com']
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
