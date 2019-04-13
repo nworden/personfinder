@@ -5,11 +5,15 @@ api_version: 1
 threadsafe: false
 
 handlers:
+# Since there's no files besides those of pfiftools, we don't bother with
+# Django's collectstatic script or anything, and point /static directly at the
+# /pfiftools/static directory.
 - url: /static
-  static_dir: static
+  static_dir: pfiftools/static/
+# Everything besides the static files is served by the Django app.
 - url: /.*
   script: wsgi.application
 
 # App Engine uses gunicorn by default, but it looks for an entrypoint at
 # main.app. We specify entrypoint to direct it to wsgi.application.
-entrypoint: gunicorn -b :$PORT wsgi:application
+entrypoint: gunicorn -b :$PORT pfiftools.wsgi:application
