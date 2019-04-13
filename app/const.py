@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from django.utils.translation import gettext_lazy as _
 
 # The root URL of this application.
-ROOT_URL = 'http://google.org/personfinder'
+ROOT_URL = 'https://google.org/personfinder'
 
 # The domain name of this application.  The application hosts multiple
 # repositories; each repository ID is https://<HOME_DOMAIN>/<REPO>.
@@ -213,6 +213,11 @@ LANGUAGE_SYNONYMS = {
     'jw' : 'jv',
     'ji' : 'yi'
 }
+
+# The language code to use when there's no indication of what language to use
+# (i.e., when the user's request doesn't indicate a language preference and
+# there are no languages specified in the repository's config).
+DEFAULT_LANGUAGE_CODE = 'en'
 
 # RTL languages.
 # This is mostly the same as LANGUAGES_BIDI set in django_setup, with the
