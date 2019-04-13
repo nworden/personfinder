@@ -35,6 +35,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'pfiftools.urls'
 
+APPEND_SLASH = True
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
