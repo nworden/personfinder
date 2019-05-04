@@ -59,11 +59,14 @@ class PerRepoTaskBaseView(TasksBaseView):
         del self, repo, kwargs  # unusued
         raise NotImplementedError()
 
+    def get_repo_list(self):
+        return model.Repo.list()
+
     def get(self, request, *args, **kwargs):
         """Schedules tasks."""
         del request, args, kwargs  # unused
         if self.env.repo == 'global':
-            for repo in model.Repo.list():
+            for repo in self.get_repo_list():
                 self.schedule_task(repo)
         else:
             self.schedule_task(self.env.repo)
