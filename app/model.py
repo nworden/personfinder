@@ -933,6 +933,7 @@ class Counter(db.Expando):
     scan_name = db.StringProperty()
     repo = db.StringProperty()
     last_key = db.StringProperty(default='')  # if non-empty, count is partial
+    cursor = db.StringProperty(default='')  # if non-empty, count is partial
 
     # Each Counter also has a dynamic property for each accumulator; all such
     # properties are named "count_" followed by a count_name.  The count_name
