@@ -3,7 +3,8 @@ queue:
 # https://cloud.google.com/appengine/quotas?csw=1#Mail
 - name: send-mail
   rate: 5/s
-# expiry query for ScanExpired tasks
+- name: counts
+  rate: 5/m
 - name: expiry
   rate: 5/m
 - name: datachecks
