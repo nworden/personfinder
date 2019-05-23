@@ -26,6 +26,7 @@ import views.admin.dashboard
 import views.admin.delete_record
 import views.admin.global_index
 import views.admin.repo_index
+import views.admin.resource_management
 import views.admin.review
 import views.admin.statistics
 import views.frontendapi
@@ -55,6 +56,8 @@ _BASE_URL_PATTERNS = [
      views.admin.global_index.AdminGlobalIndexView.as_view),
     ('admin_repo-index', r'(?P<repo>[^\/]+)/admin/?',
      views.admin.repo_index.AdminRepoIndexView.as_view),
+    ('admin_resources-index', r'global/admin/resources/?',
+     views.admin.resource_management.AdminResourcesIndexView.as_view),
     ('admin_review', r'(?P<repo>[^\/]+)/admin/review/?',
      views.admin.review.AdminReviewView.as_view),
     ('admin_statistics', r'global/admin/statistics/?',
