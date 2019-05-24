@@ -13,18 +13,71 @@
 {% extends "admin-base.html.template" %}
 {% load i18n %}
 
+{% block head %}
+  {{block.super}}
+  <style type="text/css" nonce="{{ csp_nonce }}">
+    table {
+      border: 1px solid #000;
+      border-collapse: collapse;
+    }
+    td {
+      border: 1px solid #000;
+      padding: 5px 5px 0;
+    }
+    tr.odd-row {
+      background: #e4e0e0;
+    }
+    tr.even-row {
+      background: #fff;
+    }
+  </style>
+{% endblock head %}
+
 {% block content %}
   <h2>Resource bundles</h2>
 
-  <ul>
+  <table>
     {% for bundle in existing_bundles %}
-      <li><a href="{{ bundle.url }}">{{ bundle.name }}</a></li>
+      <tr
+      {% if forloop.counter|divisibleby:2 %}
+        class="even-row"
+      {% else %}
+        class="odd-row"
+      {% endif %}
+      >
+        <td><a href="{{ bundle.url }}">{{ bundle.name }}</a></td>
+        <td>
+          {% if bundle.is_default %}
+            (default)
+          {% else %}
+            <form method="post">
+              <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+              <input type="hidden" name="operation" value="make_default" />
+              <input type="hidden" name="bundle_name" value="{{ bundle.name }}" />
+              <input type="submit" value="Make default" />
+            </form>
+          {% endif %}
+        </td>
+        <td>
+          {% if not bundle.is_default %}
+            <form method="post">
+              <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+              <input type="hidden" name="operation" value="delete" />
+              <input type="hidden" name="bundle_name" value="{{ bundle.name }}" />
+              <input type="submit" value="Delete" />
+            </form>
+          {% endif %}
+        </td>
+      </tr>
     {% endfor %}
-  </ul>
+  </table>
 
-  <form method="post" class="admin">
-    <input type="hidden" name="xsrf_token" value="{{xsrf_token}}" />
-    <input name="bundle_name" size=15 placeholder="New bundle name">
-    <input type="submit" value="Create">
+  <form method="post">
+    <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+    <input type="hidden" name="operation" value="create" />
+    <p>
+      <input name="bundle_name" size=15 placeholder="New bundle name">
+      <input type="submit" value="Create">
+    </p>
   </form>
 {% endblock %}

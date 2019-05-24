@@ -14,6 +14,7 @@
 """The admin resources pages."""
 
 import django.shortcuts
+from google.appengine.ext import db
 
 import config
 import const
@@ -32,12 +33,17 @@ class AdminResourcesIndexView(views.admin.base.AdminBaseView):
         super(AdminResourcesIndexView, self).setup(request, *args, **kwargs)
         self.params.read_values(
             get_params={'resource_bundle': utils.strip},
-            post_params={'bundle_name': utils.strip})
+            post_params={
+                'bundle_name': utils.strip,
+                'operation': utils.strip,
+            })
 
     @views.admin.base.enforce_superadmin_admin_level
     def get(self, request, *args, **kwargs):
         """Serves GET requests."""
         del request, args, kwargs  # Unused.
+        default_bundle_name = self.env.config.get(
+            'default_resource_bundle', '1')
         bundle_info = []
         for bundle in resources.ResourceBundle.all():
             name = bundle.key().name()
@@ -45,6 +51,7 @@ class AdminResourcesIndexView(views.admin.base.AdminBaseView):
                 'name': name,
                 'url': self.build_absolute_uri(
                     '/global/admin/resources/%s' % name),
+                'is_default': name == default_bundle_name,
             })
         return self.render(
             'admin_resources_index.html',
@@ -57,9 +64,33 @@ class AdminResourcesIndexView(views.admin.base.AdminBaseView):
         """Serves POST requests, creating a new resource bundle."""
         del request, args, kwargs  # Unused.
         self.enforce_xsrf(self.ACTION_ID)
+        if self.params.operation == 'create':
+            return self._create_new_bundle()
+        elif self.params.operation == 'make_default':
+            return self._make_bundle_default()
+        elif self.params.operation == 'delete':
+            return self._delete_bundle()
+
+    def _create_new_bundle(self):
         name = self.params.bundle_name
         if resources.ResourceBundle.get_by_key_name(name):
             return self.error(400, 'A bundle with that name already exists.')
         resources.ResourceBundle(key_name=name).put()
         return django.shortcuts.redirect(self.build_absolute_uri(
             '/global/admin/resources/%s' % name))
+
+    def _make_bundle_default(self):
+        name = self.params.bundle_name
+        if not resources.ResourceBundle.get_by_key_name(name):
+            return self.error(400, 'That bundle doesn\'t exist.')
+        config.set(default_resource_bundle=name)
+        return django.shortcuts.redirect(self.build_absolute_uri())
+
+    def _delete_bundle(self):
+        bundle = resources.ResourceBundle.get_by_key_name(
+            self.params.bundle_name)
+        if not bundle:
+            return self.error(400, 'That bundle doesn\'t exist.')
+        db.delete(bundle.list_resources())
+        bundle.delete()
+        return django.shortcuts.redirect(self.build_absolute_uri())
