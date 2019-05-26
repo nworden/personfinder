@@ -186,3 +186,56 @@ class AdminResourcesBundleView(views.admin.base.AdminBaseView):
         return django.shortcuts.redirect(self.build_absolute_uri(
             '/global/admin/resources/%s/%s' % (
                 self._bundle_name, self.params.resource_name)))
+
+
+class AdminResourcesFileView(views.admin.base.AdminBaseView):
+
+    ACTION_ID = 'admin/resources_file'
+
+    def setup(self, request, *args, **kwargs):
+        super(AdminResourcesFileView, self).setup(request, *args, **kwargs)
+        self._bundle_name= kwargs['bundle']
+        self._resource_name = kwargs['resource_name']
+        self.params.read_values(
+            post_params={
+                'cache_seconds': utils.validate_cache_seconds,
+                'operation': utils.strip,
+                'resource_lang': utils.strip,
+            },
+            file_params={
+                'content': lambda value: value,
+            })
+
+    @views.admin.base.enforce_superadmin_admin_level
+    def get(self, request, *args, **kwargs):
+        return self.render(
+            'admin_resources_file.html',
+            bundle_name=self._bundle_name,
+            resource_name=self._resource_name,
+            url=self.build_absolute_uri(
+                '/global/static/%s' % self._resource_name),
+            xsrf_token=self.xsrf_tool.generate_token(
+                self.env.user.user_id(), self.ACTION_ID))
+
+    @views.admin.base.enforce_superadmin_admin_level
+    def post(self, request, *args, **kwargs):
+        del request, args, kwargs  # Unused.
+        self.enforce_xsrf(self.ACTION_ID)
+        if self.params.operation == 'upload':
+            return self._upload()
+        return self.error(400)
+
+    def _upload(self):
+        bundle = resources.ResourceBundle(key_name=self._bundle_name)
+        key_name = self._resource_name
+        if self.params.resource_lang:
+            key_name += ':%s' % self.params.resource_lang
+        uploaded_content = b''
+        for chunk in self.params.content.chunks():
+            uploaded_content += chunk
+        resources.Resource(
+            parent=bundle,
+            key_name=key_name,
+            content=uploaded_content,
+            cache_seconds=self.params.cache_seconds).put()
+        return django.shortcuts.redirect(self.build_absolute_uri())
