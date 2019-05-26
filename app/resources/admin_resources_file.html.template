@@ -36,6 +36,8 @@
 {% block content %}
   <h2>{{ bundle_name }} > {{ resource_name }}</h2>
 
+  <img src="{{ url }}" />
+
   <form enctype="multipart/form-data" method="post">
     <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
     <input type="hidden" name="operation" value="upload" />
