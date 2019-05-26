@@ -32,7 +32,6 @@ class AdminResourcesIndexView(views.admin.base.AdminBaseView):
     def setup(self, request, *args, **kwargs):
         super(AdminResourcesIndexView, self).setup(request, *args, **kwargs)
         self.params.read_values(
-            get_params={'resource_bundle': utils.strip},
             post_params={
                 'bundle_name': utils.strip,
                 'operation': utils.strip,
@@ -94,3 +93,68 @@ class AdminResourcesIndexView(views.admin.base.AdminBaseView):
         db.delete(bundle.list_resources())
         bundle.delete()
         return django.shortcuts.redirect(self.build_absolute_uri())
+
+
+class AdminResourcesBundleView(views.admin.base.AdminBaseView):
+
+    ACTION_ID = 'admin/resources_bundle'
+
+    def setup(self, request, *args, **kwargs):
+        super(AdminResourcesBundleView, self).setup(request, *args, **kwargs)
+        self._bundle_name = kwargs['bundle']
+        self.params.read_values(
+            post_params={
+                'operation': utils.strip,
+                'resource_name': utils.validate_resource_name,
+            },
+            file_params={
+                'resource_file': utils.validate_image,
+            })
+
+    @views.admin.base.enforce_superadmin_admin_level
+    def get(self, request, *args, **kwargs):
+        bundle = resources.ResourceBundle.get_by_key_name(self._bundle_name)
+        resource_info = {}
+        for resource_key in bundle.list_resources():
+            if ':' in resource_key:
+                name, lang = resource_key.split(':')
+            else:
+                name = resource_key
+                lang = None
+            if name not in resource_info:
+                resource_info[name] = {
+                    'default_url': self.build_absolute_uri(
+                        '/global/admin/resources/%s/%s' % (
+                            self._bundle_name, name)),
+                    'lang_links': [],
+                }
+            if lang:
+                resource_info[name]['lang_links'].append({
+                    'lang': lang,
+                    'url': self.build_absolute_uri(
+                        '/global/admin/resources/%s/%s' % (
+                            self._bundle_name, name),
+                        params={'resource_lang': lang}),
+                })
+        resource_list = []
+        for name in sorted(resource_info.keys()):
+            info = resource_info[name]
+            resource_list.append({
+                'name': name,
+                'default_url': info['default_url'],
+                'lang_links': sorted(info['lang_links'], key=lambda ll: ll['lang']),
+            })
+        return self.render(
+            'admin_resources_bundle.html',
+            bundle_name=self._bundle_name,
+            resources=resource_list)
+
+    @views.admin.base.enforce_superadmin_admin_level
+    def post(self, request, *args, **kwargs):
+        del request, args, kwargs  # Unused.
+        self.enforce_xsrf(self.ACTION_ID)
+        if self.params.operation == 'upload':
+            return self._upload_resource()
+
+    def _upload_resource(self):
+        pass

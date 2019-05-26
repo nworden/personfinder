@@ -56,6 +56,8 @@ _BASE_URL_PATTERNS = [
      views.admin.global_index.AdminGlobalIndexView.as_view),
     ('admin_repo-index', r'(?P<repo>[^\/]+)/admin/?',
      views.admin.repo_index.AdminRepoIndexView.as_view),
+    ('admin_resources-bundle', r'global/admin/resources/(?P<bundle>[^\/]+)/?',
+     views.admin.resource_management.AdminResourcesBundleView.as_view),
     ('admin_resources-index', r'global/admin/resources/?',
      views.admin.resource_management.AdminResourcesIndexView.as_view),
     ('admin_review', r'(?P<repo>[^\/]+)/admin/review/?',
