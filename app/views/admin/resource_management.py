@@ -197,6 +197,9 @@ class AdminResourcesFileView(views.admin.base.AdminBaseView):
         self._bundle_name= kwargs['bundle']
         self._resource_name = kwargs['resource_name']
         self.params.read_values(
+            get_params={
+                'resource_lang': utils.strip,
+            },
             post_params={
                 'cache_seconds': utils.validate_cache_seconds,
                 'operation': utils.strip,
@@ -212,6 +215,7 @@ class AdminResourcesFileView(views.admin.base.AdminBaseView):
             'admin_resources_file.html',
             bundle_name=self._bundle_name,
             resource_name=self._resource_name,
+            resource_lang=self.params.resource_lang,
             url=self.build_absolute_uri(
                 '/global/static/%s' % self._resource_name),
             xsrf_token=self.xsrf_tool.generate_token(

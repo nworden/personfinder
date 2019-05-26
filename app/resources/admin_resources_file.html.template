@@ -39,6 +39,7 @@
   <form enctype="multipart/form-data" method="post">
     <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
     <input type="hidden" name="operation" value="upload" />
+    <input type="hidden" name="resource_lang" value="{{ resource_lang }}" />
     <input type="file" name="content" /><br/>
     Cache seconds: <input type="input" name="cache_seconds" size="3" /><br/>
     <input type="submit" value="Upload" />
