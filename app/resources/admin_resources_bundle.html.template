@@ -73,13 +73,4 @@
       </tr>
     {% endfor %}
   </table>
-
-  <form method="post">
-    <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
-    <input type="hidden" name="operation" value="create" />
-    <p>
-      <input name="bundle_name" size=15 placeholder="New bundle name">
-      <input type="submit" value="Create">
-    </p>
-  </form>
 {% endblock %}
