@@ -272,3 +272,10 @@ def render_in_lang(template, lang, vars):
         return template.render(django.template.Context(vars))
     finally:
         django.utils.translation.activate(original_lang)
+
+
+def get_configurable_content(filename, lang):
+    resource = get_localized(filename, lang)
+    if not resource:
+        resource = Resource.load_from_file('static/configurable/%s' % filename)
+    return resource.content

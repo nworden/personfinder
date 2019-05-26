@@ -48,14 +48,19 @@ class ConfigurableStaticFileView(views.base.BaseView):
 
     ACTION_ID = 'static'
 
+    def setup(self, request, *args, **kwargs):
+        # pylint: disable=attribute-defined-outside-init
+        super(ConfigurableStaticFileView, self).setup(request, args, kwargs)
+        self._filename = kwargs['filename']
+
     def get(self, request, *args, **kwargs):
         """Serves get requests with configurable static files."""
-        del request, args  # unused
-        filename = kwargs['filename']
-        if filename not in CONFIGURABLE_STATIC_FILES:
+        del request, args, kwargs  # Unused.
+        if self._filename not in CONFIGURABLE_STATIC_FILES:
             return self.error(404)
-        fileinfo = CONFIGURABLE_STATIC_FILES[filename]
+        fileinfo = CONFIGURABLE_STATIC_FILES[self._filename]
+        content = resources.get_configurable_content(
+            self._filename, self.env.lang)
         return django.http.HttpResponse(
-            resources.get_rendered(
-                'static/configurable/%s' % filename, self.env.lang),
+            content,
             content_type=fileinfo.content_type)
