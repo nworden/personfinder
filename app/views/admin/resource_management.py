@@ -216,7 +216,8 @@ class AdminResourcesFileView(views.admin.base.AdminBaseView):
             resource_name=self._resource_name,
             resource_lang=self.params.resource_lang,
             url=self.build_absolute_uri(
-                '/global/static/%s' % self._resource_name),
+                '/global/static/%s' % self._resource_name,
+                params={'lang': self.params.resource_lang}),
             xsrf_token=self.xsrf_tool.generate_token(
                 self.env.user.user_id(), self.ACTION_ID))
 
@@ -226,6 +227,8 @@ class AdminResourcesFileView(views.admin.base.AdminBaseView):
         self.enforce_xsrf(self.ACTION_ID)
         if self.params.operation == 'upload':
             return self._upload()
+        elif self.params.operation == 'delete':
+            return self._delete()
         return self.error(400)
 
     def _upload(self):
@@ -241,4 +244,18 @@ class AdminResourcesFileView(views.admin.base.AdminBaseView):
             key_name=key_name,
             content=uploaded_content,
             cache_seconds=self.params.cache_seconds).put()
+        return django.shortcuts.redirect(self.build_absolute_uri(
+            '/global/admin/resources/%s/%s' % (
+                self._bundle_name, self._resource_name),
+            params={'resource_lang': self.params.resource_lang}))
+
+    def _delete(self):
+        if not self.params.resource_lang:
+            return self.error(400)
+        bundle = resources.ResourceBundle(key_name=self._bundle_name)
+        key_name = '%s:%s' % (self._resource_name, self.params.resource_lang)
+        resource = resources.Resource(parent=bundle, key_name=key_name)
+        if not resource:
+            return self.error(400)
+        resource.delete()
         return django.shortcuts.redirect(self.build_absolute_uri())

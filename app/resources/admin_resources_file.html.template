@@ -36,14 +36,27 @@
 {% block content %}
   <h2>{{ bundle_name }} > {{ resource_name }}</h2>
 
-  <img src="{{ url }}" />
-
   <form enctype="multipart/form-data" method="post">
     <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
     <input type="hidden" name="operation" value="upload" />
-    <input type="hidden" name="resource_lang" value="{{ resource_lang }}" />
+    {% if resource_lang %}
+      <input type="hidden" name="resource_lang" value="{{ resource_lang }}" />
+    {% endif %}
     <input type="file" name="content" /><br/>
     Cache seconds: <input type="input" name="cache_seconds" size="3" /><br/>
     <input type="submit" value="Upload" />
   </form>
+
+  <img src="{{ url }}" />
+
+  {% if resource_lang %}
+    <form method="post">
+      <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+      <input type="hidden" name="operation" value="delete" />
+      {% if resource_lang %}
+        <input type="hidden" name="resource_lang" value="{{ resource_lang }}" />
+      {% endif %}
+      <input type="submit" value="Delete" />
+    </form>
+  {% endif %}
 {% endblock %}
