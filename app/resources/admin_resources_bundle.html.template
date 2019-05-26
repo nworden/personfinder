@@ -47,9 +47,13 @@
       >
         <td><a href="{{ resource.default_url }}">{{ resource.name }}</a></td>
         <td>
-          {% for ll in resource.lang_links %}
-            <a href="{{ ll.url }}">{{ ll.lang }}</a>
-          {% endfor %}
+          {% if resource.lang_links %}
+            {% for ll in resource.lang_links %}
+              <a href="{{ ll.url }}">{{ ll.lang }}</a>
+            {% endfor %}
+          {% else %}
+            (no language files)
+          {% endif %}
         </td>
         <td>
           <form method="post">
