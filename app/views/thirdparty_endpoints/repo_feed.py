@@ -43,11 +43,7 @@ class RepoFeedView(views.thirdparty_endpoints.base.ThirdPartyFeedBaseView):
             repos = model.Repo.all().filter(
                 'activation_status !=', model.Repo.ActivationStatus.STAGING)
         else:
-            repo = model.Repo.get(self.env.repo)
-            if repo.activation_status == model.Repo.ActivationStatus.ACTIVE:
-                repos = [repo]
-            else:
-                raise django.http.Http404()
+            repos = [model.Repo.get(self.env.repo)]
         repo_confs = {}
         for repo in repos:
             repo_id = repo.key().name()
