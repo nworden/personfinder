@@ -17,8 +17,6 @@ import django.shortcuts
 from google.appengine.ext import db
 
 import config
-import const
-import model
 import resources
 import utils
 import views.admin.base
@@ -141,7 +139,8 @@ class AdminResourcesBundleView(views.admin.base.AdminBaseView):
             resource_list.append({
                 'name': name,
                 'default_url': info['default_url'],
-                'lang_links': sorted(info['lang_links'], key=lambda ll: ll['lang']),
+                'lang_links': sorted(
+                    info['lang_links'], key=lambda ll: ll['lang']),
             })
         return self.render(
             'admin_resources_bundle.html',
@@ -194,7 +193,7 @@ class AdminResourcesFileView(views.admin.base.AdminBaseView):
 
     def setup(self, request, *args, **kwargs):
         super(AdminResourcesFileView, self).setup(request, *args, **kwargs)
-        self._bundle_name= kwargs['bundle']
+        self._bundle_name = kwargs['bundle']
         self._resource_name = kwargs['resource_name']
         self.params.read_values(
             get_params={
