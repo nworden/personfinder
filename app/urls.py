@@ -33,6 +33,7 @@ import views.meta.setup_datastore
 import views.meta.sitemap
 import views.meta.static_files
 import views.meta.static_pages
+import views.thirdparty_endpoints.person_feed
 import views.thirdparty_endpoints.repo_feed
 
 # We include an optional trailing slash in all the patterns (Django has support
@@ -98,6 +99,8 @@ _BASE_URL_PATTERNS = [
      tasksmodule.deletion.CleanupStraySubscriptionsTask.as_view),
     ('tasks_sitemap-ping', r'global/tasks/sitemap_ping/?',
      tasksmodule.sitemap_ping.SitemapPingTaskView.as_view),
+    ('thirdparty-endpoints_repo-person', r'(?P<repo>[^\/]+)/feeds/person/?',
+     views.thirdparty_endpoints.person_feed.PersonFeedView.as_view),
     ('thirdparty-endpoints_repo-feed', r'(?P<repo>[^\/]+)/feeds/repo/?',
      views.thirdparty_endpoints.repo_feed.RepoFeedView.as_view),
 ]
