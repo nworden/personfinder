@@ -69,6 +69,7 @@ class AdminResourcesIndexView(views.admin.base.AdminBaseView):
             return self._make_bundle_default()
         elif self.params.operation == 'delete':
             return self._delete_bundle()
+        return self.error(400)
 
     def _create_new_bundle(self):
         name = self.params.bundle_name
@@ -104,11 +105,9 @@ class AdminResourcesBundleView(views.admin.base.AdminBaseView):
         self._bundle_name = kwargs['bundle']
         self.params.read_values(
             post_params={
+                'language': utils.strip,
                 'operation': utils.strip,
                 'resource_name': utils.validate_resource_name,
-            },
-            file_params={
-                'resource_file': utils.validate_image,
             })
 
     @views.admin.base.enforce_superadmin_admin_level
@@ -147,14 +146,43 @@ class AdminResourcesBundleView(views.admin.base.AdminBaseView):
         return self.render(
             'admin_resources_bundle.html',
             bundle_name=self._bundle_name,
-            resources=resource_list)
+            resources=resource_list,
+            xsrf_token=self.xsrf_tool.generate_token(
+                self.env.user.user_id(), self.ACTION_ID))
 
     @views.admin.base.enforce_superadmin_admin_level
     def post(self, request, *args, **kwargs):
         del request, args, kwargs  # Unused.
         self.enforce_xsrf(self.ACTION_ID)
-        if self.params.operation == 'upload':
-            return self._upload_resource()
+        if self.params.operation == 'add_language':
+            return self._add_language()
+        elif self.params.operation == 'delete':
+            return self._delete()
+        elif self.params.operation == 'create':
+            return self._create()
+        return self.error(400)
 
-    def _upload_resource(self):
-        pass
+    def _add_language(self):
+        return django.shortcuts.redirect(self.build_absolute_uri(
+            '/global/admin/resources/%s/%s' % (
+                self._bundle_name, self.params.resource_name),
+            params={'resource_lang': self.params.language}))
+
+    def _delete(self):
+        to_delete = []
+        for resource in resources.Resource.all().ancestor(
+                resources.ResourceBundle.get_by_key_name(self._bundle_name)):
+            resource_key = resource.key().name()
+            if ':' in resource_key:
+                name, _ = resource_key.split(':')
+            else:
+                name = resource_key
+            if name == self.params.resource_name:
+                to_delete.append(resource)
+        db.delete(to_delete)
+        return django.shortcuts.redirect(self.build_absolute_uri())
+
+    def _create(self):
+        return django.shortcuts.redirect(self.build_absolute_uri(
+            '/global/admin/resources/%s/%s' % (
+                self._bundle_name, self.params.resource_name)))

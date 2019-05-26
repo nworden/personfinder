@@ -55,22 +55,29 @@
           <form method="post">
             <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
             <input type="hidden" name="operation" value="add_language" />
-            <input type="hidden" name="resource_name" value="{{ name }}" />
+            <input type="hidden" name="resource_name" value="{{ resource.name }}" />
             <input type="input" name="language" size="2" />
             <input type="submit" value="Add language" />
           </form>
         </td>
         <td>
-          {% if not bundle.is_default %}
-            <form method="post">
-              <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
-              <input type="hidden" name="operation" value="delete" />
-              <input type="hidden" name="resource_name" value="{{ name }}" />
-              <input type="submit" value="Delete" />
-            </form>
-          {% endif %}
+          <form method="post">
+            <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+            <input type="hidden" name="operation" value="delete" />
+            <input type="hidden" name="resource_name" value="{{ resource.name }}" />
+            <input type="submit" value="Delete" />
+          </form>
         </td>
       </tr>
     {% endfor %}
   </table>
+
+  <form method="post">
+    <input type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+    <input type="hidden" name="operation" value="create" />
+    <p>
+      <input name="resource_name" size=15 placeholder="New resource name">
+      <input type="submit" value="Create">
+    </p>
+  </form>
 {% endblock %}
