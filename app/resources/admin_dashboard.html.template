@@ -14,14 +14,20 @@
 {% load i18n %}
 
 {% block content %}
-<script src="https://www.google.com/jsapi"></script>
+<script src="https://www.google.com/jsapi" nonce="{{ csp_nonce }}"></script>
+
+<style type="text/css" nonce="{{ csp_nonce }}">
+  div.chart {
+    height: 200px;
+  }
+</style>
 
 <h2>Persons</h2>
-<div id="person-chart" style="height: 200px"></div>
+<div id="person-chart" class="chart"></div>
 
 <p>
 <h2>Notes</h2>
-<div id="note-chart" style="height: 200px"></div>
+<div id="note-chart" class="chart"></div>
 
 <p>
 <h2>Totals by category</h2>
@@ -31,7 +37,7 @@
 <h2>Data sources</h2>
 <div id="sources"></div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 var DATA = {{data_js|safe}};
 
 function draw_chart() {
